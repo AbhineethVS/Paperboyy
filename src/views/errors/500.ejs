@@ -1,0 +1,8 @@
+<%# 500 page fragment: generic failure copy; optional technical detail only outside production. %>
+<section class="space-y-4">
+  <h1 class="text-2xl font-bold uppercase tracking-tight">Server error</h1>
+  <p class="text-sm text-neutral-700"><%= typeof errorMessage === 'string' ? errorMessage : 'Unexpected error.' %></p>
+  <% if (typeof errorDetails === 'string' && errorDetails.length) { %>
+    <pre class="overflow-x-auto border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-800"><%= errorDetails %></pre>
+  <% } %>
+</section>

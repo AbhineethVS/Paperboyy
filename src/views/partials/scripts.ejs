@@ -1,0 +1,7 @@
+<%# Client asset loader: Vite dev client + entry in development; built assets in production. %>
+<% if (!isProduction) { %>
+  <script type="module" src="/@vite/client"></script>
+  <script type="module" src="/ui/main.js"></script>
+<% } else { %>
+  <script type="module" src="/assets/main.js"></script>
+<% } %>

@@ -1,0 +1,52 @@
+You are an AI coding agent working on the Paperboyy project.
+
+High priority rules (must follow)
+- Do not use emojis in any output (chat or code).
+- This project uses Express + EJS. Do not create .html pages for app routes. Use routes like /browser, /search, /paper/:paperId.
+- Keep OCR out of scope. Do not implement any OCR pipeline unless explicitly requested later.
+- Use Tailwind styling that matches the high-contrast modernist engineering-grid design in extras/DESIGN.md and extras/code.html.
+
+Comments in every file
+- Every new or edited source file must start with a short top-of-file comment explaining what the file is responsible for.
+  - JavaScript/TypeScript: use // at the top.
+  - EJS: use <%# ... %> at the top.
+  - CSS: use /* ... */ at the top.
+  - JSON: do not add comments (JSON does not allow them). Instead, keep intent in README or adjacent docs.
+- Comments must explain intent and responsibilities, not narrate obvious code.
+
+Architecture constraints
+- Use server-rendered EJS pages with partials. Do not duplicate boilerplate across pages.
+- Split view boilerplate into EJS partials at minimum:
+  - views/layouts/base.ejs
+  - views/partials/head.ejs
+  - views/partials/navbar.ejs
+  - views/partials/footer.ejs
+  - views/partials/scripts.ejs (Vite dev/prod loader)
+- Keep page routes and API routes separate (e.g., src/routes/pages/* and src/routes/api/*).
+- Keep business logic out of route files; route files should call controllers/services.
+
+Error handling (required)
+- No unhandled promise rejections.
+- Every async route handler must be wrapped (e.g., asyncHandler(fn)).
+- Centralize error handling middleware:
+  - Render custom EJS pages for 404 and 500.
+  - For /api/* routes, return JSON errors in a consistent shape:
+    {
+      error: { code: string, message: string, requestId: string }
+    }
+- Never leak secrets or stack traces to the client in production.
+
+Auth + authorization
+- Use Clerk for authentication.
+- Protect signed-in pages (e.g., /dashboard, /upload) with auth middleware.
+- Admin pages and admin APIs must be protected by an admin guard (admin identity via env-configured Clerk user id).
+
+Core product scope reminders
+- Upload flow is Submission -> Admin Inbox -> Admin converts to Paper/Questions/Answers.
+- Suggested content must stay simple (or omit it) to avoid complexity.
+
+Code quality
+- Prefer small modules with clear responsibilities.
+- Validate inputs at the edges (routes/controllers). Return user-friendly errors.
+- Use consistent naming and folder structure aligned to extras/PAPERBOYY_MASTERPLAN.md.
+

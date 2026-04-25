@@ -1,0 +1,20 @@
+<%# Semester selection page for a selected branch in the guided browse flow. %>
+<section class="space-y-10">
+  <header class="space-y-3">
+    <a class="text-xs font-semibold uppercase tracking-wide text-neutral-600 hover:text-neutral-900" href="/browse">Back to branches</a>
+    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Branch <%= branch %></p>
+    <h1 class="text-3xl font-bold uppercase tracking-tight text-neutral-900 md:text-4xl">Choose semester</h1>
+  </header>
+
+  <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-8">
+    <% for (let semester = 1; semester <= 8; semester++) { %>
+      <a
+        href="/browse/subjects?branch=<%= encodeURIComponent(branch) %>&semester=<%= semester %>"
+        class="border border-neutral-900 bg-white px-4 py-6 text-center transition-colors hover:bg-neutral-900 hover:text-white"
+      >
+        <span class="block text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">Semester</span>
+        <span class="mt-3 block text-2xl font-bold uppercase">S<%= semester %></span>
+      </a>
+    <% } %>
+  </div>
+</section>

@@ -1,0 +1,18 @@
+<%# Document head: charset, viewport, title, fonts, and production stylesheet for built Tailwind CSS. %>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title><%= typeof title === 'string' && title.trim().length ? `${title.trim()} · Paperboyy` : 'Paperboyy' %></title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+  rel="stylesheet"
+/>
+<% if (isProduction) { %>
+  <link rel="stylesheet" href="/assets/main.css" />
+<% } %>
+<style>
+  html {
+    font-family: 'Public Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+</style>

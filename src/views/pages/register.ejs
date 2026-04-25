@@ -1,0 +1,46 @@
+<%# Registration form: email and password collected for local bcrypt-backed accounts. %>
+<section class="mx-auto max-w-md space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Create account</p>
+    <h1 class="mt-2 text-2xl font-bold uppercase tracking-tight text-neutral-900">Register</h1>
+    <p class="mt-2 text-sm text-neutral-700">Use your email and a password (minimum 6 characters).</p>
+  </div>
+
+  <% if (typeof authError === 'string' && authError.length) { %>
+    <p class="border border-neutral-900 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" role="alert"><%= authError %></p>
+  <% } %>
+
+  <form method="post" action="/register" class="space-y-6 border border-neutral-900 p-6">
+    <div class="space-y-2">
+      <label for="email" class="block text-xs font-semibold uppercase tracking-wide text-neutral-700">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+        class="w-full border border-neutral-900 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+      />
+    </div>
+    <div class="space-y-2">
+      <label for="password" class="block text-xs font-semibold uppercase tracking-wide text-neutral-700">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        required
+        minlength="6"
+        class="w-full border border-neutral-900 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+      />
+    </div>
+    <button type="submit" class="w-full border border-neutral-900 bg-neutral-900 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white hover:bg-white hover:text-neutral-900">
+      Create account
+    </button>
+  </form>
+
+  <p class="text-center text-sm text-neutral-600">
+    Already have an account?
+    <a class="font-semibold text-neutral-900 underline decoration-1 underline-offset-4 hover:bg-neutral-900 hover:text-white" href="/login">Sign in</a>
+  </p>
+</section>

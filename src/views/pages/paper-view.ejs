@@ -1,0 +1,239 @@
+<%# Paper detail page that renders KTU Part A/Part B questions with marks, CO tags, and toggleable answers. %>
+<section class="space-y-10">
+  <header class="space-y-4 border border-neutral-900 bg-white p-6">
+    <a
+      class="text-xs font-semibold uppercase tracking-wide text-neutral-600 hover:text-neutral-900"
+      href="/browse"
+    >Back to browse</a>
+    <% if (isAdmin) { %>
+      <a
+        class="inline-flex border border-neutral-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+        href="/admin"
+      >Back to Admin</a>
+    <% } %>
+    <div class="space-y-3">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Paper viewer</p>
+      <h1 class="text-3xl font-bold uppercase tracking-tight text-neutral-900 md:text-4xl">
+        <%= paper.subjectName || paper.title || paper.subject || 'Paper' %>
+      </h1>
+      <dl class="grid gap-3 text-sm sm:grid-cols-4">
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Semester</dt>
+          <dd class="font-mono text-neutral-900">S<%= paper.semester || '-' %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Paper type</dt>
+          <dd class="font-mono uppercase text-neutral-900"><%= paper.paperType || '-' %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Year</dt>
+          <dd class="font-mono text-neutral-900"><%= paper.year || '-' %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Subject code</dt>
+          <dd class="font-mono text-neutral-900"><%= paper.subjectCode || paper.subject || '-' %></dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <% const hasPartA = Array.isArray(partA) && partA.length > 0; %>
+  <% const partBModules = partB && Array.isArray(partB.modules) ? partB.modules : []; %>
+  <% const hasPartB = partBModules.some((moduleGroup) => moduleGroup.questions.length > 0); %>
+  <% let answerIndex = 0; %>
+
+  <% if (!hasPartA && !hasPartB) { %>
+    <div class="border border-neutral-900 bg-white p-6">
+      <p class="text-sm font-semibold uppercase tracking-wide text-neutral-700">No questions available yet for this paper</p>
+    </div>
+  <% } else { %>
+    <% if (hasPartA) { %>
+      <section class="space-y-4">
+        <div class="border-b border-neutral-900 pb-3">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Part A</p>
+          <h2 class="text-2xl font-bold uppercase tracking-tight text-neutral-900">Answer all questions</h2>
+        </div>
+
+        <% partA.forEach((q) => { %>
+          <% const answerId = `answer-${answerIndex++}`; %>
+          <article id="question-<%= q._id %>" class="border border-neutral-900 bg-white p-5">
+            <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <h3 class="text-base font-bold leading-relaxed text-neutral-900">
+                Q<%= q.questionNumber %>. <%= q.questionText %>
+              </h3>
+
+              <div class="flex shrink-0 flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-700">
+                <% if (q.marks) { %>
+                  <span class="border border-neutral-900 px-2 py-1">Marks: <%= q.marks %></span>
+                <% } %>
+
+                <% if (q.co) { %>
+                  <span class="border border-neutral-900 px-2 py-1">CO: <%= q.co %></span>
+                <% } %>
+              </div>
+            </div>
+
+            <% if (isAdmin) { %>
+              <div class="admin-actions mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                <a
+                  class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                  href="/admin/question/edit/<%= q._id %>"
+                >Edit question</a>
+
+                <form method="POST" action="/admin/question/delete/<%= q._id %>" style="display:inline;">
+                  <button
+                    class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                    type="submit"
+                  >Delete question</button>
+                </form>
+
+                <% if (!q.answer) { %>
+                  <a
+                    class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                    href="/admin/answer/new?questionId=<%= q._id %>"
+                  >Add answer</a>
+                <% } %>
+              </div>
+            <% } %>
+
+            <button
+              class="mt-4 border border-neutral-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+              type="button"
+              onclick="toggleAnswer('<%= answerId %>')"
+            >
+              View answer
+            </button>
+
+            <div id="<%= answerId %>" class="hidden mt-4 border-t border-neutral-900 pt-4 text-sm leading-relaxed text-neutral-800">
+              <% if (q.answer) { %>
+                <p class="whitespace-pre-line"><%= q.answer.answerText %></p>
+                <% if (isAdmin) { %>
+                  <div class="admin-actions mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                    <a
+                      class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                      href="/admin/answer/edit/<%= q.answer._id %>"
+                    >Edit answer</a>
+
+                    <form method="POST" action="/admin/answer/delete/<%= q.answer._id %>" style="display:inline;">
+                      <button
+                        class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                        type="submit"
+                      >Delete answer</button>
+                    </form>
+                  </div>
+                <% } %>
+              <% } else { %>
+                <p class="text-neutral-500">No answer available yet</p>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+      </section>
+    <% } %>
+
+    <% if (hasPartB) { %>
+      <section class="space-y-6">
+        <div class="border-b border-neutral-900 pb-3">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Part B</p>
+          <h2 class="text-2xl font-bold uppercase tracking-tight text-neutral-900">Module questions</h2>
+        </div>
+
+        <% partBModules.forEach((moduleGroup) => { %>
+          <% if (moduleGroup.questions.length) { %>
+            <section class="space-y-4">
+              <h3 class="border border-neutral-900 bg-neutral-900 px-4 py-3 text-sm font-bold uppercase tracking-[0.25em] text-white">
+                Module <%= moduleGroup.module || '-' %>
+              </h3>
+
+              <% moduleGroup.questions.forEach((questionGroup) => { %>
+                <article class="border border-neutral-900 bg-white p-5">
+                  <h4 class="text-lg font-bold uppercase tracking-tight text-neutral-900">Q<%= questionGroup.questionNumber %></h4>
+
+                  <div class="mt-4 space-y-5">
+                    <% questionGroup.subParts.forEach((q) => { %>
+                      <% const answerId = `answer-${answerIndex++}`; %>
+                      <div id="question-<%= q._id %>" class="border-t border-neutral-200 pt-4 first:border-t-0 first:pt-0">
+                        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                          <p class="text-sm font-semibold leading-relaxed text-neutral-900">
+                            <% if (q.subPart) { %>
+                              <span class="font-mono">(<%= q.subPart %>)</span>
+                            <% } %>
+                            <%= q.questionText %>
+                          </p>
+
+                          <div class="flex shrink-0 flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-700">
+                            <% if (q.marks) { %>
+                              <span class="border border-neutral-900 px-2 py-1">Marks: <%= q.marks %></span>
+                            <% } %>
+
+                            <% if (q.co) { %>
+                              <span class="border border-neutral-900 px-2 py-1">CO: <%= q.co %></span>
+                            <% } %>
+                          </div>
+                        </div>
+
+                        <% if (isAdmin) { %>
+                          <div class="admin-actions mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <a
+                              class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                              href="/admin/question/edit/<%= q._id %>"
+                            >Edit question</a>
+
+                            <form method="POST" action="/admin/question/delete/<%= q._id %>" style="display:inline;">
+                              <button
+                                class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                                type="submit"
+                              >Delete question</button>
+                            </form>
+
+                            <% if (!q.answer) { %>
+                              <a
+                                class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                                href="/admin/answer/new?questionId=<%= q._id %>"
+                              >Add answer</a>
+                            <% } %>
+                          </div>
+                        <% } %>
+
+                        <button
+                          class="mt-3 border border-neutral-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+                          type="button"
+                          onclick="toggleAnswer('<%= answerId %>')"
+                        >
+                          View answer
+                        </button>
+
+                        <div id="<%= answerId %>" class="hidden mt-4 border-t border-neutral-900 pt-4 text-sm leading-relaxed text-neutral-800">
+                          <% if (q.answer) { %>
+                            <p class="whitespace-pre-line"><%= q.answer.answerText %></p>
+                            <% if (isAdmin) { %>
+                              <div class="admin-actions mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                                <a
+                                  class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                                  href="/admin/answer/edit/<%= q.answer._id %>"
+                                >Edit answer</a>
+
+                                <form method="POST" action="/admin/answer/delete/<%= q.answer._id %>" style="display:inline;">
+                                  <button
+                                    class="border border-neutral-900 px-3 py-2 transition-colors hover:bg-neutral-900 hover:text-white"
+                                    type="submit"
+                                  >Delete answer</button>
+                                </form>
+                              </div>
+                            <% } %>
+                          <% } else { %>
+                            <p class="text-neutral-500">No answer available yet</p>
+                          <% } %>
+                        </div>
+                      </div>
+                    <% }) %>
+                  </div>
+                </article>
+              <% }) %>
+            </section>
+          <% } %>
+        <% }) %>
+      </section>
+    <% } %>
+  <% } %>
+</section>

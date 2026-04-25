@@ -1,0 +1,38 @@
+<%# Hybrid browse: semester grid (always), subject and paper regions hydrated from /api/subjects and /api/papers when query params are present. %>
+<section id="browse-page" class="space-y-12" data-semester="<%= semester == null ? '' : semester %>" data-subject="<%= subject == null ? '' : subject %>">
+  <header class="space-y-2">
+    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Archive</p>
+    <h1 class="text-2xl font-bold uppercase tracking-tight text-neutral-900 md:text-3xl">Browse papers</h1>
+  </header>
+
+  <div id="semester-section" class="space-y-4">
+    <h2 class="text-xs font-semibold uppercase tracking-wide text-neutral-700">Semester</h2>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-8">
+      <% for (let s = 1; s <= 8; s++) { %>
+        <% const active = semester === s; %>
+        <a
+          href="/browse?semester=<%= s %>"
+          class="border border-neutral-900 px-3 py-4 text-center text-xs font-semibold uppercase tracking-wide transition-colors <%= active ? 'bg-neutral-900 text-white' : 'hover:bg-neutral-900 hover:text-white' %>"
+        >
+          S<%= s %>
+        </a>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (semester != null) { %>
+  <div id="subject-section" class="space-y-4">
+    <h2 class="text-xs font-semibold uppercase tracking-wide text-neutral-700">Subjects</h2>
+    <div id="subject-list" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
+    <p id="subject-empty" class="hidden text-sm text-neutral-600">No subjects found</p>
+  </div>
+  <% } %>
+
+  <% if (semester != null && subject) { %>
+  <div id="papers-section" class="space-y-4">
+    <h2 class="text-xs font-semibold uppercase tracking-wide text-neutral-700">Papers</h2>
+    <div id="papers-list" class="grid gap-3 sm:grid-cols-2"></div>
+    <p id="papers-empty" class="hidden text-sm text-neutral-600">No papers found</p>
+  </div>
+  <% } %>
+</section>

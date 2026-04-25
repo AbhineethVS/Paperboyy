@@ -1,0 +1,37 @@
+<%# Signed-in dashboard: local account identity plus placeholder areas for bookmarks and submissions. %>
+<section class="space-y-8">
+  <div>
+    <h1 class="text-2xl font-bold uppercase tracking-tight">Dashboard</h1>
+    <p class="mt-2 text-sm text-neutral-700">Signed-in home. Lists will connect to MongoDB in later prompts.</p>
+  </div>
+
+  <div class="border border-neutral-900 p-6">
+    <h2 class="text-sm font-bold uppercase tracking-tight">Account</h2>
+    <dl class="mt-4 space-y-2 text-sm">
+      <div class="flex flex-col gap-1 sm:flex-row sm:gap-4">
+        <dt class="font-semibold text-neutral-600">User id</dt>
+        <dd class="font-mono text-neutral-900"><%= typeof userId === 'string' && userId.length ? userId : '—' %></dd>
+      </div>
+      <div class="flex flex-col gap-1 sm:flex-row sm:gap-4">
+        <dt class="font-semibold text-neutral-600">Email</dt>
+        <dd class="text-neutral-900">
+          <% if (typeof userEmail === 'string' && userEmail.length) { %>
+            <%= userEmail %>
+          <% } else { %>
+            <span class="text-neutral-500">Not available</span>
+          <% } %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="border border-neutral-200 p-6">
+    <h2 class="text-sm font-bold uppercase tracking-tight">Bookmarks</h2>
+    <p class="mt-2 text-sm text-neutral-600">Placeholder. Paper bookmarks will appear here after the bookmarks feature ships.</p>
+  </div>
+
+  <div class="border border-neutral-200 p-6">
+    <h2 class="text-sm font-bold uppercase tracking-tight">Submissions</h2>
+    <p class="mt-2 text-sm text-neutral-600">Placeholder. Upload history and status will appear here after submissions are wired.</p>
+  </div>
+</section>

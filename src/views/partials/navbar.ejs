@@ -1,0 +1,36 @@
+<%# V1 public nav with admin link shown only after session admin mode is enabled. %>
+<header class="border-b border-neutral-900">
+	<div
+		class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4"
+	>
+		<a href="/" class="text-sm font-semibold uppercase tracking-[0.2em]"
+			>Paperboyy</a
+		>
+		<nav
+			class="flex flex-wrap items-center gap-4 text-xs font-semibold uppercase tracking-wide"
+		>
+			<a
+				class="hover:bg-neutral-900 hover:text-white px-2 py-1"
+				href="/browse"
+				>Archive</a
+			>
+			<a
+				class="hover:bg-neutral-900 hover:text-white px-2 py-1"
+				href="/search"
+				>Search</a
+			>
+			<% if (isAdmin) { %>
+				<a
+					class="hover:bg-neutral-900 hover:text-white px-2 py-1"
+					href="/admin"
+					>Admin</a
+				>
+				<a
+					class="hover:bg-neutral-900 hover:text-white px-2 py-1"
+					href="/admin/logout"
+					>Logout</a
+				>
+			<% } %>
+		</nav>
+	</div>
+</header>

@@ -1,0 +1,4 @@
+/* Tailwind entry and global base styles for Paperboyy (compiled by Vite). */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

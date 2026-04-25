@@ -1,0 +1,45 @@
+<%# Login form: email and password verified against bcrypt-stored hashes. %>
+<section class="mx-auto max-w-md space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Welcome back</p>
+    <h1 class="mt-2 text-2xl font-bold uppercase tracking-tight text-neutral-900">Login</h1>
+    <p class="mt-2 text-sm text-neutral-700">Sign in with your email and password.</p>
+  </div>
+
+  <% if (typeof authError === 'string' && authError.length) { %>
+    <p class="border border-neutral-900 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" role="alert"><%= authError %></p>
+  <% } %>
+
+  <form method="post" action="/login" class="space-y-6 border border-neutral-900 p-6">
+    <div class="space-y-2">
+      <label for="email" class="block text-xs font-semibold uppercase tracking-wide text-neutral-700">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+        class="w-full border border-neutral-900 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+      />
+    </div>
+    <div class="space-y-2">
+      <label for="password" class="block text-xs font-semibold uppercase tracking-wide text-neutral-700">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+        class="w-full border border-neutral-900 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+      />
+    </div>
+    <button type="submit" class="w-full border border-neutral-900 bg-neutral-900 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white hover:bg-white hover:text-neutral-900">
+      Sign in
+    </button>
+  </form>
+
+  <p class="text-center text-sm text-neutral-600">
+    No account yet?
+    <a class="font-semibold text-neutral-900 underline decoration-1 underline-offset-4 hover:bg-neutral-900 hover:text-white" href="/register">Register</a>
+  </p>
+</section>

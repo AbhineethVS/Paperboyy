@@ -1,0 +1,198 @@
+<%# Quick search page with keyword highlighting, filters, inline answers, and paper links. %>
+<%
+  function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }[char]));
+  }
+
+  function escapeRegex(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function highlight(text, keyword) {
+    const source = String(text || '');
+    const term = String(keyword || '').trim();
+    if (!term) {
+      return escapeHtml(source);
+    }
+
+    const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
+    return source
+      .split(regex)
+      .map((part, index) =>
+        index % 2 === 1
+          ? `<strong class="bg-neutral-900 px-1 text-white">${escapeHtml(part)}</strong>`
+          : escapeHtml(part),
+      )
+      .join('');
+  }
+
+  const activeFilters = filters || {};
+  const semesterOptions = Array.from({ length: 8 }, (_, index) => index + 1);
+  const isEmptySearch =
+    !activeFilters.q &&
+    (!activeFilters.semester || activeFilters.semester === 'All') &&
+    (!activeFilters.type || activeFilters.type === 'All') &&
+    !activeFilters.subject;
+%>
+
+<section class="space-y-10">
+  <header class="space-y-3">
+    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Quick Search</p>
+    <h1 class="text-3xl font-bold uppercase tracking-tight text-neutral-900 md:text-4xl">
+      Find Questions Fast
+    </h1>
+    <p class="max-w-2xl text-sm leading-6 text-neutral-700">
+      Search across approved paper questions, expand answers inline, and jump back to the full paper.
+    </p>
+  </header>
+
+  <form class="border border-neutral-900 bg-white p-5" action="/search" method="GET">
+    <div class="grid gap-4 md:grid-cols-6">
+      <label class="space-y-2 md:col-span-3">
+        <span class="block text-xs font-semibold uppercase tracking-wide text-neutral-600">Keyword</span>
+        <input
+          class="w-full border border-neutral-900 px-3 py-3 text-sm outline-none focus:bg-neutral-100"
+          type="search"
+          name="q"
+          value="<%= activeFilters.q || '' %>"
+          placeholder="Search question text"
+        >
+      </label>
+
+      <label class="space-y-2">
+        <span class="block text-xs font-semibold uppercase tracking-wide text-neutral-600">Semester</span>
+        <select
+          class="w-full border border-neutral-900 bg-white px-3 py-3 text-sm outline-none focus:bg-neutral-100"
+          name="semester"
+        >
+          <option value="">All (any semester)</option>
+          <% semesterOptions.forEach((semesterValue) => { %>
+            <option
+              value="<%= semesterValue %>"
+              <%= String(activeFilters.semester || '') === String(semesterValue) ? 'selected' : '' %>
+            >S<%= semesterValue %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label class="space-y-2">
+        <span class="block text-xs font-semibold uppercase tracking-wide text-neutral-600">Subject</span>
+        <input
+          class="w-full border border-neutral-900 px-3 py-3 text-sm uppercase outline-none focus:bg-neutral-100"
+          type="text"
+          name="subject"
+          value="<%= activeFilters.subject || '' %>"
+          placeholder="CST201"
+        >
+      </label>
+
+      <label class="space-y-2">
+        <span class="block text-xs font-semibold uppercase tracking-wide text-neutral-600">Type</span>
+        <select
+          class="w-full border border-neutral-900 bg-white px-3 py-3 text-sm outline-none focus:bg-neutral-100"
+          name="type"
+        >
+          <option value="">All (any type)</option>
+          <option value="MODEL" <%= activeFilters.type === 'MODEL' ? 'selected' : '' %>>Model</option>
+          <option value="ENDSEM" <%= activeFilters.type === 'ENDSEM' ? 'selected' : '' %>>Endsem</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="mt-5 flex flex-wrap gap-3">
+      <button
+        class="border border-neutral-900 bg-neutral-900 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white hover:text-neutral-900"
+        type="submit"
+      >
+        Search
+      </button>
+      <a
+        class="border border-neutral-900 px-5 py-3 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+        href="/search"
+      >Reset</a>
+    </div>
+  </form>
+
+  <section class="space-y-4">
+    <% if (isEmptySearch) { %>
+      <div class="border border-neutral-900 bg-white p-6">
+        <p class="text-sm font-semibold uppercase tracking-wide text-neutral-700">
+          Select filters or enter a keyword to search
+        </p>
+      </div>
+    <% } else { %>
+      <div class="flex items-end justify-between gap-4 border-b border-neutral-900 pb-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Results</p>
+          <h2 class="text-2xl font-bold uppercase tracking-tight text-neutral-900">
+            <%= results.length %> Match<%= results.length === 1 ? '' : 'es' %>
+          </h2>
+        </div>
+      </div>
+
+      <% if (!results.length) { %>
+        <div class="border border-neutral-900 bg-white p-6">
+          <p class="text-sm font-semibold uppercase tracking-wide text-neutral-700">No results found</p>
+        </div>
+      <% } else { %>
+        <div class="space-y-4">
+          <% results.forEach((r) => { %>
+            <% const paper = r.paper || {}; %>
+            <% const paperType = String(paper.type || paper.paperType || '').toLowerCase(); %>
+            <article class="border border-neutral-900 bg-white p-5">
+              <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-700">
+                <span class="border border-neutral-900 px-2 py-1"><%= paper.subjectName || 'Unknown' %></span>
+                <span class="border border-neutral-900 px-2 py-1">S<%= paper.semester || '-' %></span>
+                <span class="border border-neutral-900 px-2 py-1"><%= paper.year || '-' %></span>
+                <% if (paperType) { %>
+                  <span class="<%= paperType === 'endsem' ? 'border border-neutral-900 font-bold text-neutral-900' : 'border border-neutral-400 text-neutral-700' %> px-2 py-1">
+                    <%= paperType.toUpperCase() %>
+                  </span>
+                <% } %>
+              </div>
+
+              <h3 class="mt-4 text-base font-bold leading-relaxed text-neutral-900">
+                <%- highlight(r.questionText, activeFilters.q) %>
+              </h3>
+
+              <div class="mt-5 flex flex-wrap gap-3">
+                <button
+                  class="border border-neutral-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+                  type="button"
+                  onclick="toggleAnswer('<%= r._id %>')"
+                >
+                  View Answer
+                </button>
+
+                <a
+                  class="border border-neutral-900 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+                  href="/paper/<%= r.paperId %>"
+                >
+                  Open Full Paper
+                </a>
+              </div>
+
+              <% if (r.answer) { %>
+                <div
+                  id="ans-<%= r._id %>"
+                  class="mt-4 border-t border-neutral-900 pt-4 text-sm leading-relaxed text-neutral-800"
+                  style="display:none;"
+                >
+                  <p class="whitespace-pre-line"><%= r.answer.answerText %></p>
+                </div>
+              <% } else { %>
+                <p class="mt-4 text-sm text-neutral-500">No answer yet</p>
+              <% } %>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    <% } %>
+  </section>
+</section>

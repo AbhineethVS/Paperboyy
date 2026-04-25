@@ -1,0 +1,112 @@
+<%# Admin form for creating or editing one KTU-format question on an existing paper. %>
+<section class="space-y-8">
+  <header class="space-y-3">
+    <a class="text-xs font-semibold uppercase tracking-wide text-neutral-600 hover:text-neutral-900" href="/admin">Back to admin</a>
+    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600">Admin</p>
+    <h1 class="text-3xl font-bold uppercase tracking-tight text-neutral-900 md:text-4xl"><%= form.heading %></h1>
+  </header>
+
+  <% if (error) { %>
+    <div class="border border-neutral-900 bg-white p-4 text-sm font-semibold text-neutral-900">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <form class="space-y-5 border border-neutral-900 bg-white p-6" method="post" action="<%= form.action %>">
+    <label class="block space-y-2">
+      <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Paper ID</span>
+      <input
+        class="w-full border border-neutral-900 px-3 py-2 font-mono text-sm"
+        name="paperId"
+        type="text"
+        value="<%= values.paperId || '' %>"
+        required
+      />
+    </label>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block space-y-2">
+        <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Part</span>
+        <select class="w-full border border-neutral-900 px-3 py-2 text-sm" name="part" required>
+          <option value="A" <%= values.part === 'A' ? 'selected' : '' %>>A</option>
+          <option value="B" <%= values.part === 'B' ? 'selected' : '' %>>B</option>
+        </select>
+      </label>
+
+      <label class="block space-y-2">
+        <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Module</span>
+        <input
+          class="w-full border border-neutral-900 px-3 py-2 text-sm"
+          name="module"
+          type="number"
+          min="1"
+          value="<%= values.module || '' %>"
+        />
+      </label>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-3">
+      <label class="block space-y-2">
+        <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Question number</span>
+        <input
+          class="w-full border border-neutral-900 px-3 py-2 text-sm"
+          name="questionNumber"
+          type="number"
+          min="1"
+          value="<%= values.questionNumber || '' %>"
+          required
+        />
+      </label>
+
+      <label class="block space-y-2">
+        <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Sub-part</span>
+        <input
+          class="w-full border border-neutral-900 px-3 py-2 text-sm"
+          name="subPart"
+          type="text"
+          maxlength="4"
+          placeholder="a"
+          value="<%= values.subPart || '' %>"
+        />
+      </label>
+
+      <label class="block space-y-2">
+        <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Marks</span>
+        <input
+          class="w-full border border-neutral-900 px-3 py-2 text-sm"
+          name="marks"
+          type="number"
+          min="0"
+          value="<%= values.marks || '' %>"
+        />
+      </label>
+    </div>
+
+    <label class="block space-y-2">
+      <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">CO</span>
+      <input
+        class="w-full border border-neutral-900 px-3 py-2 text-sm"
+        name="co"
+        type="text"
+        placeholder="CO1"
+        value="<%= values.co || '' %>"
+      />
+    </label>
+
+    <label class="block space-y-2">
+      <span class="text-xs font-semibold uppercase tracking-wide text-neutral-600">Question text</span>
+      <textarea
+        class="min-h-32 w-full border border-neutral-900 px-3 py-2 text-sm"
+        name="questionText"
+        required
+      ><%= values.questionText || '' %></textarea>
+    </label>
+
+    <button
+      class="border border-neutral-900 px-4 py-3 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-neutral-900 hover:text-white"
+      type="submit"
+    >
+      <%= form.submitLabel %>
+    </button>
+  </form>
+</section>

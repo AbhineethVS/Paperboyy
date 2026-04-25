@@ -1,0 +1,15 @@
+<%# Outer HTML shell: shared layout that injects page-specific content via contentPartial. %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head') %>
+  </head>
+  <body class="min-h-screen bg-white text-neutral-900 antialiased">
+    <%- include('../partials/navbar') %>
+    <main class="mx-auto w-full max-w-5xl px-6 py-16">
+      <%- include(contentPartial) %>
+    </main>
+    <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+  </body>
+</html>
